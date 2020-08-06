@@ -1,5 +1,5 @@
 ============================================================================
- pytest-darker – A pytest plugin to enable checking of modified code Darker
+ pytest-darker – A pytest plugin for checking of modified code using Darker
 ============================================================================
 
 |travis-badge|_ |license-badge|_ |pypi-badge|_ |downloads-badge|_ |black-badge|_ |changelog-badge|_
