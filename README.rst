@@ -90,6 +90,7 @@ in the `pytest-darker issue tracker`_ along with a detailed description.
 .. _Pytest: https://docs.pytest.org/
 .. _pytest-darker issue tracker: https://github.com/akaihola/pytest-darker/issues
 .. _Black: https://github.com/python/black
+.. _isort: https://pypi.org/project/isort/
 .. _Black documentation about pyproject.toml: https://black.readthedocs.io/en/stable/pyproject_toml.html
 .. _Black example configuration: https://github.com/ambv/black/blob/master/pyproject.toml
 .. _isort documentation about config files: https://timothycrosley.github.io/isort/docs/configuration/config_files/
