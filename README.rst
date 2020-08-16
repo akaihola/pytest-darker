@@ -29,13 +29,15 @@ There is a minimum requirement of Darker_ 1.1.0 later.
 Installation
 ============
 
+::
+
     $ pip install pytest-darker
 
 
 Usage
 =====
 
-To run pytest with checks provided by Darker_:
+To run pytest with checks provided by Darker_::
 
     $ pytest --darker
 
@@ -61,11 +63,11 @@ For more details, see:
 Testing
 =======
 
-To run the tests against a selection of Python interpreters:
+To run the tests against a selection of Python interpreters::
 
     $ tox
 
-To run against a specific interpreter (e.g. Python 3.6):
+To run against a specific interpreter (e.g. Python 3.6)::
 
     $ tox -e py36
 
