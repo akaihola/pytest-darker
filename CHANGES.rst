@@ -8,6 +8,9 @@ Added
 
 Fixed
 -----
+- Added missing dependency on ``pytest>=5.4``. This is the minimum version which has the
+  plugin API we're building on.
+
 
 0.0.1_ / 2020-08-06
 ===================
