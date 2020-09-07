@@ -8,6 +8,8 @@ Added
 
 Fixed
 -----
+- Correct GitHub URLs in package metadata.
+
 
 0.0.1_ / 2020-08-06
 ===================
