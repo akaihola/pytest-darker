@@ -11,6 +11,8 @@ from _pytest.cacheprovider import Cache
 from _pytest.config import Config
 from _pytest.config.argparsing import Parser
 
+from darker.__main__ import main
+
 HISTKEY = "darker/mtimes"
 
 
@@ -48,21 +50,16 @@ class DarkerItem(pytest.Item, pytest.File):
             pytest.skip("file(s) excluded by pyproject.toml")
 
     def runtest(self) -> None:
-        cmd = [
-            sys.executable,
-            "-m",
-            "darker",
-            "--check",
-            "--diff",
-            "--quiet",
-            str(self.fspath),
-        ]
-        try:
-            subprocess.run(
-                cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True
-            )
-        except subprocess.CalledProcessError as e:
-            raise DarkerError(e)
+        retval = main(
+            [
+                "--check",
+                "--diff",
+                "--quiet",
+                str(self.fspath),
+            ]
+        )
+        if retval != 0:
+            raise DarkerError("Edited lines are not Black formatted")
 
         mtimes = getattr(self.config, "_darkermtimes", {})
         mtimes[str(self.fspath)] = self._darkermtime
@@ -71,7 +68,7 @@ class DarkerItem(pytest.Item, pytest.File):
         self, excinfo: ExceptionInfo[BaseException]
     ) -> Union[str, TerminalRepr]:
         if excinfo.errisinstance(DarkerError):
-            return cast(TerminalRepr, excinfo.value.args[0].stdout)
+            return cast(TerminalRepr, excinfo.value)
         return super(DarkerItem, self).repr_failure(excinfo)
 
     def reportinfo(self) -> Tuple[Union[py.path.local, str], Optional[int], str]:

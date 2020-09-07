@@ -5,6 +5,7 @@ These features will be included in the next release:
 
 Added
 -----
+- Import and call Darker in-process instead of as a subprocess.
 
 Fixed
 -----
