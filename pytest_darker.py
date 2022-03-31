@@ -1,6 +1,5 @@
 import re
-import subprocess
-import sys
+from pathlib import Path
 from typing import Any, Optional, Tuple, Union, cast
 
 import py
@@ -10,33 +9,31 @@ from _pytest._code.code import ExceptionInfo, TerminalRepr
 from _pytest.cacheprovider import Cache
 from _pytest.config import Config
 from _pytest.config.argparsing import Parser
-
 from darker.__main__ import main
 
 HISTKEY = "darker/mtimes"
+PYTEST_7 = int(pytest.__version__.split(".")[0]) >= 7
 
 
 class DarkerError(Exception):
     pass
 
 
-class DarkerItem(pytest.Item, pytest.File):
-    def __init__(self, fspath: py.path.local, parent: pytest.Session):
-        super(DarkerItem, self).__init__(fspath, parent)
-        self._nodeid += "::DARKER"
+class DarkerItem(pytest.Item):
+    def __init__(self, path: Path, parent: pytest.Collector):
+        if PYTEST_7:
+            relative_path = path.relative_to(parent.config.rootpath)
+        else:
+            relative_path = Path(path).relative_to(parent.config.rootpath)
+        super(DarkerItem, self).__init__(
+            "DARKER", parent=parent, nodeid=f"{relative_path}::DARKER"
+        )
         self.add_marker("darker")
         try:
             with open("pyproject.toml") as toml_file:
                 self.pyproject = toml.load(toml_file)["tool"]["darker"]
         except Exception:
             self.pyproject = {}
-
-    @classmethod
-    def from_parent(  # type: ignore[override]
-        cls, parent: pytest.Session, *, fspath: py.path.local, **kw: Any
-    ) -> "DarkerItem":
-        """The public constructor"""
-        return cast(DarkerItem, super().from_parent(parent=parent, fspath=fspath, **kw))
 
     def setup(self) -> None:
         pytest.importorskip("darker")
@@ -95,17 +92,25 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
 
-def pytest_collect_file(
-    path: py.path.local, parent: pytest.Session
-) -> Optional[DarkerItem]:
-    config = parent.config
-    if config.option.darker and path.ext == ".py":
-        if hasattr(DarkerItem, "from_parent"):
-            return DarkerItem.from_parent(parent, fspath=path)
+if PYTEST_7:
+
+    def pytest_collect_file(
+        file_path: Path, parent: pytest.Collector
+    ) -> Optional[DarkerItem]:
+        if parent.config.option.darker and file_path.suffix == ".py":
+            return DarkerItem.from_parent(path=file_path, parent=parent)
         else:
-            return DarkerItem(path, parent)
-    else:
-        return None
+            return None
+
+else:
+
+    def pytest_collect_file(
+        path: py.path.local, parent: pytest.Collector
+    ) -> Optional[DarkerItem]:
+        if parent.config.option.darker and path.ext == ".py":
+            return DarkerItem.from_parent(path=path, parent=parent)
+        else:
+            return None
 
 
 def pytest_configure(config: Config) -> None:
