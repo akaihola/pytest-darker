@@ -16,7 +16,7 @@ Fixed
 Added
 -----
 - Import and call Darker in-process instead of as a subprocess.
-- Limit Pytest to version <8 until the incompatibility has been fixed.
+- Limit Pytest to version <7 until the incompatibility has been fixed.
 
 
 0.1.2_ / 2020-08-16
