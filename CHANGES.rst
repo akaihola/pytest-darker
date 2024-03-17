@@ -8,6 +8,8 @@ Added
 
 Fixed
 -----
+- Correct GitHub URLs in package metadata.
+
 
 
 0.1.4_ / 2024-02-25
